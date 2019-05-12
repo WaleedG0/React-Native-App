@@ -1,6 +1,7 @@
 import Immutable from "seamless-immutable";
 import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
 import { updateMatchingCandidates } from "../Candidates/CandidatesRedux";
+import { setFiltersInitialValue } from "../Filters/FiltersRedux";
 
 /* ------------- Actions ------------- */
 const APP_STARTED_REQUEST = "mossad/App/APP_STARTED_REQUEST";
@@ -66,6 +67,8 @@ export function appStarted() {
 
       const filters = await loadFromStorage("filters");
 
+      dispatch(setFiltersInitialValue(filters));
+      
       dispatch(
         updateMatchingCandidates({
           candidatesDB: candidates,
