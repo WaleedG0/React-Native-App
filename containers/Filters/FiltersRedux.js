@@ -17,6 +17,7 @@ const SET_FILTERS_INITAL_VALUE = "mossad/Filters/SET_FILTERS_INITAL_VALUE";
 /* ------------- initial state ------------- */
 const initialState = Immutable({
   params: [],
+  technologiesDB: [],
   loading: false,
   error: false
 });
@@ -64,7 +65,8 @@ export default function reducer(state = initialState, action = {}) {
 
     case SET_FILTERS_INITAL_VALUE:
       return state.merge({
-        params: action.payload.params
+        params: action.payload.params,
+        technologiesDB: action.payload.technologies
       });
 
     default:
@@ -89,8 +91,8 @@ export function deleteFilterRequest() {
   return { type: DELETE_FILTER_REQUEST };
 }
 
-export function deleteFilterSuccess(param) {
-  return { type: DELETE_FILTER_SUCCESS, payload: { param } };
+export function deleteFilterSuccess(data) {
+  return { type: DELETE_FILTER_SUCCESS, payload: { data } };
 }
 
 export function deleteFilterError(error) {
@@ -98,7 +100,7 @@ export function deleteFilterError(error) {
 }
 
 export function setFiltersInitialValue(params) {
-  return { type: SET_FILTERS_INITAL_VALUE, payload: { params } };
+  return { type: SET_FILTERS_INITAL_VALUE, payload:  params };
 }
 
 /* ------------- Thunks ------------- */

@@ -59,7 +59,7 @@ export function appStarted() {
 
       const accepted = await loadFromStorage("accepted");
       const rejected = await loadFromStorage("rejected");
-      
+
       // await saveToStorage("filters", [
       //   { name: "Create React App", experianceYears: 3 },
       //   { name: "StackBlitz", experianceYears: 6 }
@@ -67,8 +67,13 @@ export function appStarted() {
 
       const filters = await loadFromStorage("filters");
 
-      dispatch(setFiltersInitialValue(filters));
-      
+      dispatch(
+        setFiltersInitialValue({
+          params: filters,
+          technologies
+        })
+      );
+
       dispatch(
         updateMatchingCandidates({
           candidatesDB: candidates,
