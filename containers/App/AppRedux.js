@@ -1,5 +1,6 @@
 import Immutable from "seamless-immutable";
 import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
+import { updateMatchingCandidates } from "../Candidates/CandidatesRedux";
 
 /* ------------- Actions ------------- */
 const APP_STARTED_REQUEST = "mossad/App/APP_STARTED_REQUEST";
@@ -49,8 +50,30 @@ export function appStarted() {
   return async (dispatch, getState, api) => {
     try {
       dispatch(appStartedRequest());
-      const token = await loadFromStorage("candidates");
-      let result;
+      const technologies = await api.TechnologiesModel.loadTechcologies();
+      await saveToStorage("technologies", technologies);
+
+      const candidates = await api.CandidatesModel.loadCandidates();
+      await saveToStorage("candidates", candidates);
+
+      const accepted = await loadFromStorage("accepted");
+      const rejected = await loadFromStorage("rejected");
+      
+      // await saveToStorage("filters", [
+      //   { name: "Create React App", experianceYears: 3 },
+      //   { name: "StackBlitz", experianceYears: 6 }
+      // ]);
+
+      const filters = await loadFromStorage("filters");
+
+      dispatch(
+        updateMatchingCandidates({
+          candidatesDB: candidates,
+          filters,
+          accepted,
+          rejected
+        })
+      );
 
       dispatch(appStartedSuccess());
     } catch (error) {

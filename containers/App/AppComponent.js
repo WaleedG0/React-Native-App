@@ -52,8 +52,8 @@ export default class App extends React.Component {
   };
 
   _handleFinishLoading = () => {
-    // const {appStarted} = this.props;
+    const {appStarted} = this.props;
     this.setState({ isLoadingComplete: true });
-    // appStarted()
+    appStarted()
   };
 }

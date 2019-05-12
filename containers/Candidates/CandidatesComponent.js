@@ -1,8 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { ScrollView, View } from "react-native";
 import styles from "./CandidatesStyles";
-
-import { Button, Text } from "native-base";
 
 export default class Candidates extends React.Component {
   static navigationOptions = {
@@ -16,10 +15,15 @@ export default class Candidates extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View>
-          </View>
+          <View />
         </ScrollView>
       </View>
     );
   }
 }
+
+Candidates.propTypes = {
+  matches: PropTypes.arrayOf(PropTypes.object),
+  onRejectCandidate: PropTypes.func,
+  onAcceptCandidate: PropTypes.func
+};
