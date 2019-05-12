@@ -23,7 +23,6 @@ const request = async options => {
   const onSuccess = response => {
     if (__DEV__) {
       console.log('%cRequest Successful!', 'color: blue; font-weight: bold;', response.config.url);
-      console.log(response);
     }
     return response.data;
   };
