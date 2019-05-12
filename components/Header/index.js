@@ -13,7 +13,6 @@ import styles from "./styles";
 export default class HeaderComponent extends React.Component {
   render() {
     return (
-      <Container>
         <Header>
           <Left />
           <Body style={styles.bodyContainer}>
@@ -22,7 +21,6 @@ export default class HeaderComponent extends React.Component {
           </Body>
           <Right />
         </Header>
-      </Container>
     );
   }
 }
