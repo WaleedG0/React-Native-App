@@ -1,6 +1,8 @@
 import React from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View } from "react-native";
 import styles from "./CandidatesStyles";
+
+import { Button, Text } from "native-base";
 
 export default class Candidates extends React.Component {
   static navigationOptions = {
@@ -14,7 +16,8 @@ export default class Candidates extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <Text>yayayayyaayaay!</Text>
+          <View>
+          </View>
         </ScrollView>
       </View>
     );
