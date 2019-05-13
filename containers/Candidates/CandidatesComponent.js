@@ -11,11 +11,24 @@ export default class Candidates extends React.Component {
     header: null
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.matches.length !== this.props.matches.length) {
+      return true;
+    }
+
+    return false;
+  }
+
   render() {
-    const { matches, loading, onAcceptCandidate, onRejectCandidate } = this.props;
+    const {
+      matches,
+      loading,
+      onAcceptCandidate,
+      onRejectCandidate
+    } = this.props;
 
     //could not get FlatList to work with tender animation
-    let trimmedMatches = matches.length > 5 ? matches.slice(0, 5) : matches;
+    let trimmedMatches = matches.length > 10 ? matches.slice(0, 10) : matches;
 
     return !loading ? (
       <View style={styles.container}>

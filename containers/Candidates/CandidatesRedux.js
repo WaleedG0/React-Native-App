@@ -16,7 +16,7 @@ const ACCEPT_CANDIDATES__REQUEST =
   "mossad/Candidates/ACCEPT_CANDIDATES__REQUEST";
 const ACCEPT_CANDIDATES_SUCCESS =
   "mossad/Candidates/ACCEPT__CANDIDATES_SUCCESS";
-const ACCEPT__CANDIDATES_ERROR = "mossad/Candidates/ACCEPT_CANDIDATES_ERROR";
+const ACCEPT_CANDIDATES_ERROR = "mossad/Candidates/ACCEPT_CANDIDATES_ERROR";
 
 const UPDATE_MATCHING_CANDIDATES =
   "mossad/Candidates/UPDATE_MATCHING_CANDIDATES";
@@ -42,12 +42,14 @@ export default function reducer(state = initialState, action = {}) {
     //@todo: update matches when accepted / rejected is changed
     case REJECT_CANDIDATES_SUCCESS:
       return state.merge({
-        rejected: [...state.rejected, action.payload.candidateId]
+        rejected: [...state.rejected, action.payload.candidateId],
+        loading: false
       });
 
     case ACCEPT_CANDIDATES_SUCCESS:
       return state.merge({
-        accepted: [...state.accepted, action.payload.candidateId]
+        accepted: [...state.accepted, action.payload.candidateId],
+        loading: false
       });
 
     case UPDATE_MATCHING_CANDIDATES:
@@ -82,8 +84,8 @@ export function rejectCandidatesRequest() {
   return { type: REJECT_CANDIDATES__REQUEST };
 }
 
-export function rejectCandidatesSuccess(candidateId) {
-  return { type: REJECT_CANDIDATES_SUCCESS, payload: { candidateId } };
+export function rejectCandidatesSuccess(rejected) {
+  return { type: REJECT_CANDIDATES_SUCCESS, payload: { rejected } };
 }
 
 export function rejectCandidatesError(error) {
@@ -114,6 +116,7 @@ export function rejectCandidate(candidateId) {
 
       let rejected = await loadFromStorage("rejected");
 
+      //initialize
       if (!rejected) {
         await saveToStorage("rejected", []);
         rejected = await loadFromStorage("rejected");
@@ -122,7 +125,7 @@ export function rejectCandidate(candidateId) {
 
       await saveToStorage("rejected", rejected);
 
-      dispatch(rejectCandidatesSuccess(candidateId));
+      dispatch(rejectCandidatesSuccess(rejected));
     } catch (error) {
       dispatch(rejectCandidatesError(error));
     }
@@ -135,6 +138,7 @@ export function acceptCandidate(candidateId) {
       dispatch(acceptCandidatesRequest());
 
       let accepted = await loadFromStorage("accepted");
+
       //initialize
       if (!accepted) {
         await saveToStorage("accepted", []);

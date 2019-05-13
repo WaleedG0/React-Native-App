@@ -13,14 +13,14 @@ export default () => {
   const thunkMiddleware = thunk.withExtraArgument(api);
   middlewares.push(thunkMiddleware);
 
-  // only use logger middleware in DEV mode
-  if (__DEV__) {
-    const logger = createLogger({
-      collapsed: true,
-      duration: true,
-    });
-    middlewares.push(logger);
-  }
+  // // only use logger middleware in DEV mode
+  // if (__DEV__) {
+  //   const logger = createLogger({
+  //     collapsed: true,
+  //     duration: true,
+  //   });
+  //   middlewares.push(logger);
+  // }
 
   let store;
   if (__DEV__) {
