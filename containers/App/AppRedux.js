@@ -60,7 +60,9 @@ export function appStarted() {
       const accepted = await loadFromStorage("accepted");
       const rejected = await loadFromStorage("rejected");
 
-      await saveToStorage("filters", []);
+      await saveToStorage("filters", [
+        { name: "Amazon DynamoDB", experianceYears: 1 }
+      ]);
 
       const filters = await loadFromStorage("filters");
 

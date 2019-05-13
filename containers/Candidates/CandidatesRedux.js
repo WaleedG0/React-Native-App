@@ -5,7 +5,7 @@ import filterMatches from "../../util/filterMatches";
 /* ------------- Actions ------------- */
 
 const FILTER_CANDIDATES__REQUEST =
-  "mossad/Candidates/REJECT_CANDIDATES__REQUEST";
+  "mossad/Candidates/FILTER_CANDIDATES__REQUEST";
 
 const REJECT_CANDIDATES__REQUEST =
   "mossad/Candidates/REJECT_CANDIDATES__REQUEST";

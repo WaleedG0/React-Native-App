@@ -112,18 +112,18 @@ export function addFilterParam(filterParam) {
     try {
       dispatch(addFilterRequest());
 
-      const filters = await loadFromStorage("filters");
+      let filters = await loadFromStorage("filters");
       //check if param already exists
       if (filters.findIndex(param => param.name === filterParam.name) === -1) {
         filters.push(filterParam);
       }
-      await saveToStorage("filters", filters);
+      filters = await saveToStorage("filters", filters);
 
       dispatch(addFilterSuccess(filterParam));
 
       //load new matches after filters change
       dispatch(filterCandidatesRequest());
-      dispatch(updateMatchingCandidates(null, filters));
+      dispatch(updateMatchingCandidates({ filters }));
     } catch (error) {
       dispatch(addFilterError(error));
     }
@@ -135,9 +135,9 @@ export function deleteFilterParam(filterParam) {
     try {
       dispatch(deleteFilterRequest());
 
-      const filters = await loadFromStorage("filters");
+      let filters = await loadFromStorage("filters");
 
-      await saveToStorage(
+      filters = await saveToStorage(
         "filters",
         filters.filter(param => param.name !== filterParam.name)
       );
@@ -145,7 +145,7 @@ export function deleteFilterParam(filterParam) {
       dispatch(deleteFilterSuccess(filterParam));
       //load new matches after filters change
       dispatch(filterCandidatesRequest());
-      dispatch(updateMatchingCandidates(null, filters));
+      dispatch(updateMatchingCandidates({ filters }));
     } catch (error) {
       dispatch(deleteFilterError(error));
     }
