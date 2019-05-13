@@ -14,12 +14,10 @@ export default class HeaderComponent extends React.Component {
   render() {
     return (
         <Header>
-          <Left />
           <Body style={styles.bodyContainer}>
             <Icon style={styles.logoIcon} name={"star-outline"} size={30} />
             <Title style={styles.headerTitle}>MOSSAD</Title>
           </Body>
-          <Right />
         </Header>
     );
   }

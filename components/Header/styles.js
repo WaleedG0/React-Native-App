@@ -1,19 +1,11 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   bodyContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    ...Platform.select({
-      android: {
-        justifyContent: "flex-end"
-      }
-    })
-  },
-
-  headerTitle: {
-    textTransform: "capitalize"
+    justifyContent: "center"
   },
 
   logoIcon: {
