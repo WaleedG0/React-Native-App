@@ -1,33 +1,40 @@
-Dear Waleed,
+### Usage
 
-The Israeli Mosad, due to it's special recruitment methods, has access to all developers in the world.
-Their cyber units are in constant growth, and need to provide support to various types of operations and technologies.
-The challenge is to filter out and find the best matching candidates for the right position.
+```sh
+yarn start 
+```
 
-Your task will be to craft a React Native app, that will allow the Mosad recruiters to handle the vast amount of data on both ends.
 
-### The Mosad recruiter is expecting to be able to:
-1. Insert the parameters of his search, and have them stored in the app until he changes them, even if he closes the app
-2. On each candidate should be able to swipe left or right (tinder style), which will mark the candidate as accepted or rejected
-3. Mosad doesn't give second chances. Regardless of accepting or rejecting a candidate, he should never be shown again
-4. Later on an interface to view accepted candidates will be developed, but this is out of scope for this task
+## Architecture
 
-### API
-Get technologies:  
-https://welcome.dropboy.io/technologies  
-Get candidates:  
-https://welcome.dropboy.io/candidates
+- **/Components** This folder contains Reusable UI  presentational components some of them are (ICon / Header) etc.
 
-### A few things to notice
-1. A search parameter is a combination of a technology + years of experience
-2. Unfortunately all Mosad backend engineers are on a vacation, filtering must be done in the app
-3. The data set of candidates is vast and quickly growing, the app should not slow down with growth of the list to 100k records
-4. User friendly UI is a plus
-5. No need to display all data from endpoints, you choose only what you like - keep it simple
-6. Unit test are a plus. e2e tests are a bigger plus
-7. Please don't spend more than 4 hours on this task, it's alright if you don't complete it
+- **/Containers** Here is where things starts to get a little bit interesting, each container folder will contain 4 files:
 
-Please submit your solution into this repository.
-Don't hesitate to contact me on any question you might have :)
+     - *Component file* :  (P.S the reason why i did not put this file in the components folder because it not reusable and it just acts like a screen/page).
 
-Good luck!
+    - *Container file* : 
+    No thing new here, This where components connects to redux.
+    
+    - *Redux file* : Here I am following "ducks-modular-redux" proposal to group all redux stuff in one file. i really do like this approach because it keeps everything in one place which makes things easier when debugging.
+    
+    - *Styles file* :  I used React Native StyleSheets for styling our components. i also used inline styles in some of components because lack of time.
+
+- **/Api** I know that this application only hits tow endpoints and this might seem like an overkill but i like to keep everything modular so i created a folder for models, each model file will contain all the http methods for a particular collection (i.e technologies/candidates).
+
+
+
+
+### Improvements
+
+This is a list of things that I would improve if i had more time:
+
+- **Ui**: I used Native base as a UI Library to quicklly put together a decent UI but due to lack of time I could not polish it and make it look nicer and more friendly and perhaps fix some of the bugs hahaha. 
+
+- **Performance**: I wan going to use React Native FlatList to render the matched candidates but because I am using absolute positiong to stack the list of candidates to make the tender swipe but it turned out that FlatList does not work with position absolute so I used .map but i did not have the time to configure to lazy render the components instead I limited to only render 50 views maximum.
+
+- **Type-checking**: I usually use flow.js to define the types of data that are passed into the components, but for this simple taks I used PropTypes
+
+- **Testing**: Due to lack of time i was not able to write tests with jest & enzyme. 
+
+
