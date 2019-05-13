@@ -1,6 +1,5 @@
 const filterMatches = (candidatesDB, filters, rejected, accepted) => {
   const matches = candidatesDB.filter(candidate => {
-
     //using for loop so we can break if candidate does not have any of the technology in his toolbox.
     for (let i = 0; i < filters.length; i++) {
       if (
@@ -20,9 +19,8 @@ const filterMatches = (candidatesDB, filters, rejected, accepted) => {
       : false;
   });
 
-
+  console.tron.log(matches);
   return matches;
 };
-
 
 export default filterMatches;

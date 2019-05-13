@@ -30,8 +30,7 @@ export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case ADD_FILTER_REQUEST:
       return state.merge({
-        loading: true,
-        params: [...state.params, action.payload.filter]
+        loading: true
       });
 
     case ADD_FILTER_SUCCESS:
@@ -54,10 +53,7 @@ export default function reducer(state = initialState, action = {}) {
     case DELETE_FILTER_SUCCESS:
       return state.merge({
         loading: false,
-        params: state.params.filter(
-          param =>
-            param.name === action.payload.param && action.payload.param.name
-        )
+        params: action.payload.params
       });
 
     case DELETE_FILTER_ERROR:
@@ -94,8 +90,8 @@ export function deleteFilterRequest() {
   return { type: DELETE_FILTER_REQUEST };
 }
 
-export function deleteFilterSuccess(data) {
-  return { type: DELETE_FILTER_SUCCESS, payload: { data } };
+export function deleteFilterSuccess(params) {
+  return { type: DELETE_FILTER_SUCCESS, payload: { params } };
 }
 
 export function deleteFilterError(error) {
@@ -108,16 +104,14 @@ export function setFiltersInitialValue(params) {
 
 /* ------------- Thunks ------------- */
 export function addFilterParam(filterParam) {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     try {
       dispatch(addFilterRequest());
 
       let filters = await loadFromStorage("filters");
-      //check if param already exists
-      if (filters.findIndex(param => param.name === filterParam.name) === -1) {
-        filters.push(filterParam);
-      }
-      filters = await saveToStorage("filters", filters);
+      filters.push(filterParam);
+
+      await saveToStorage("filters", filters);
 
       dispatch(addFilterSuccess(filterParam));
 
@@ -136,13 +130,16 @@ export function deleteFilterParam(filterParam) {
       dispatch(deleteFilterRequest());
 
       let filters = await loadFromStorage("filters");
-
-      filters = await saveToStorage(
+      
+      await saveToStorage(
         "filters",
         filters.filter(param => param.name !== filterParam.name)
       );
 
-      dispatch(deleteFilterSuccess(filterParam));
+     filters = await loadFromStorage("filters");
+
+
+      dispatch(deleteFilterSuccess(filters));
       //load new matches after filters change
       dispatch(filterCandidatesRequest());
       dispatch(updateMatchingCandidates({ filters }));

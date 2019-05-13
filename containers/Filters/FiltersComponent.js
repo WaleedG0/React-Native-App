@@ -21,43 +21,46 @@ export default class Filters extends React.Component {
   };
 
   render() {
-    const { filters, onDeleteFilter } = this.props;
-
+    const { filters, onDeleteFilter, navigation } = this.props;
+    const { navigate } = navigation;
+    console.tron.log(filters);
     return (
       <View>
-        <View style={{flexDirection: "row"}}>
-        <Button style={{ flex: 1, margin: 10, justifyContent: "center"}} bordered onPress={() => onDeleteFilter(technology)}>
-          <Text>Add Filter</Text>
-        </Button>
-
+        <View style={{ flexDirection: "row" }}>
+          <Button
+            style={{ flex: 1, margin: 10, justifyContent: "center" }}
+            bordered
+            onPress={() => navigate("AddFilter")}
+          >
+            <Text>Add Filter</Text>
+          </Button>
         </View>
 
-        <ScrollView>
+        <View>
           {filters.map((technology, i) => (
-            <Container key={i}>
-              <Content>
-                <List>
-                  <ListItem thumbnail>
-                    <Left>
-                      <Thumbnail square source={{ uri: technology.logo }} />
-                    </Left>
-                    <Body>
-                      <Text>{technology.name}</Text>
-                      <Text note numberOfLines={1}>
-                        {`${technology.experianceYears} years of experince`}
-                      </Text>
-                    </Body>
-                    <Right>
-                      <Button danger onPress={() => onDeleteFilter(technology)}>
-                        <Text>Delete</Text>
-                      </Button>
-                    </Right>
-                  </ListItem>
-                </List>
-              </Content>
-            </Container>
+            <List key={i}>
+              <ListItem thumbnail>
+                <Left>
+                  <Thumbnail square source={{ uri: technology.logo }} />
+                </Left>
+                <Body>
+                  <Text>{technology.name}</Text>
+                  <Text note numberOfLines={1}>
+                    {`${technology.experianceYears} years of experince`}
+                  </Text>
+                </Body>
+                <Right>
+                  <Button
+                    danger
+                    onPress={onDeleteFilter.bind(this, technology)}
+                  >
+                    <Text>Delete</Text>
+                  </Button>
+                </Right>
+              </ListItem>
+            </List>
           ))}
-        </ScrollView>
+        </View>
       </View>
     );
   }
