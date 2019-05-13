@@ -1,19 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Image } from "react-native";
 import {
-  Container,
-  Content,
   List,
   ListItem,
   Thumbnail,
   Text,
-  Left,
   Body,
   Right,
-  Button
+  Button,
+  Spinner
 } from "native-base";
-import styles from "./FiltersStyles";
 
 export default class Filters extends React.Component {
   static navigationOptions = {
@@ -21,9 +18,9 @@ export default class Filters extends React.Component {
   };
 
   render() {
-    const { filters, onDeleteFilter, navigation } = this.props;
+    const { filters, onDeleteFilter, loading, navigation } = this.props;
     const { navigate } = navigation;
-    console.tron.log(filters);
+
     return (
       <View>
         <View style={{ flexDirection: "row" }}>
@@ -37,29 +34,46 @@ export default class Filters extends React.Component {
         </View>
 
         <View>
-          {filters.map((technology, i) => (
-            <List key={i}>
-              <ListItem thumbnail>
-                <Left>
-                  <Thumbnail square source={{ uri: technology.logo }} />
-                </Left>
-                <Body>
-                  <Text>{technology.name}</Text>
-                  <Text note numberOfLines={1}>
-                    {`${technology.experianceYears} years of experince`}
-                  </Text>
-                </Body>
-                <Right>
-                  <Button
-                    danger
-                    onPress={onDeleteFilter.bind(this, technology)}
-                  >
-                    <Text>Delete</Text>
-                  </Button>
-                </Right>
-              </ListItem>
-            </List>
-          ))}
+          {loading ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                marginTop: 30
+              }}
+            >
+              <Spinner color="blue" />
+            </View>
+          ) : (
+            filters.map((technology, i) => (
+              <List key={i}>
+                <ListItem thumbnail>
+                  <View>
+                    <Thumbnail
+                      style={{ width: 50, height: 50 }}
+                      source={{
+                        uri: technology.logo
+                      }}
+                    />
+                  </View>
+                  <Body>
+                    <Text>{technology.name}</Text>
+                    <Text note numberOfLines={1}>
+                      {`${technology.experianceYears} years of experince`}
+                    </Text>
+                  </Body>
+                  <Right>
+                    <Button
+                      danger
+                      onPress={onDeleteFilter.bind(this, technology)}
+                    >
+                      <Text>Delete</Text>
+                    </Button>
+                  </Right>
+                </ListItem>
+              </List>
+            ))
+          )}
         </View>
       </View>
     );

@@ -12,7 +12,10 @@ export default class Candidates extends React.Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.matches.length !== this.props.matches.length) {
+    if (
+      nextProps.matches.length !== this.props.matches.length ||
+      nextProps.matches.length === 0
+    ) {
       return true;
     }
 
@@ -30,34 +33,48 @@ export default class Candidates extends React.Component {
     //could not get FlatList to work with tender animation
     let trimmedMatches = matches.length > 10 ? matches.slice(0, 10) : matches;
 
-    return !loading ? (
+    return (
       <View style={styles.container}>
-        <View
-          style={{
-            height: layout.window.height - 120,
-            width: layout.window.width - 20,
-            margin: 10,
-            borderRadius: 5,
-            position: "absolute",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <Text>No Matches Left</Text>
-        </View>
+        {!loading && trimmedMatches.length > 0 && (
+          <View>
+            <View
+              style={{
+                height: layout.window.height - 120,
+                width: layout.window.width - 20,
+                margin: 10,
+                borderRadius: 5,
+                position: "absolute",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Text>No Matches Left</Text>
+            </View>
 
-        {trimmedMatches.map((match, i) => (
-          <Match
-            onLike={onAcceptCandidate}
-            onDislike={onRejectCandidate}
-            key={i}
-            match={match}
-          />
-        ))}
-      </View>
-    ) : (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Spinner color="blue" />
+            {trimmedMatches.map((match, i) => (
+              <Match
+                onLike={onAcceptCandidate}
+                onDislike={onRejectCandidate}
+                key={i}
+                match={match}
+              />
+            ))}
+          </View>
+        )}
+
+        {loading && (
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Spinner color="blue" />
+          </View>
+        )}
+
+        {!loading && trimmedMatches.length === 0 && (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text>No matches found</Text>
+          </View>
+        )}
       </View>
     );
   }

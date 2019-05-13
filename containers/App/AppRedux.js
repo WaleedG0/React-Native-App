@@ -60,7 +60,13 @@ export function appStarted() {
       const accepted = await loadFromStorage("accepted");
       const rejected = await loadFromStorage("rejected");
 
-      const filters = await loadFromStorage("filters");
+      let filters = await loadFromStorage("filters");
+
+      //initialize
+      if(!filters) {
+        await saveToStorage("filters", []);
+        filters = []
+      }
 
       dispatch(
         setFiltersInitialValue({

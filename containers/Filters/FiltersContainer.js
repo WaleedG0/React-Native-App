@@ -3,7 +3,8 @@ import * as FiltersActions from "./FiltersRedux";
 import FiltersComponent from "./FiltersComponent";
 
 const mapStateToProps = ({ filters }) => ({
-  filters: filters.params
+  filters: filters.params,
+  loading: filters.loading
 });
 
 const mapDispatchToProps = dispatch => ({
