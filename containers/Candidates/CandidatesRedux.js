@@ -3,6 +3,10 @@ import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
 import filterMatches from "../../util/filterMatches";
 
 /* ------------- Actions ------------- */
+
+const FILTER_CANDIDATES__REQUEST =
+  "mossad/Candidates/REJECT_CANDIDATES__REQUEST";
+
 const REJECT_CANDIDATES__REQUEST =
   "mossad/Candidates/REJECT_CANDIDATES__REQUEST";
 const REJECT_CANDIDATES_SUCCESS = "mossad/Candidates/REJECT_CANDIDATES_SUCCESS";
@@ -23,13 +27,18 @@ const initialState = Immutable({
   candidatesDB: [],
   accepted: [],
   rejected: [],
-  loading: false,
+  loading: true,
   error: false
 });
 
 /* ------------- Reducer ------------- */
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case FILTER_CANDIDATES__REQUEST:
+      return state.merge({
+        loading: true
+      });
+
     //@todo: update matches when accepted / rejected is changed
     case REJECT_CANDIDATES_SUCCESS:
       return state.merge({
@@ -55,7 +64,8 @@ export default function reducer(state = initialState, action = {}) {
           action.payload.filters || [],
           rejected,
           accepted
-        )
+        ),
+        loading: false
       });
 
     default:
@@ -64,6 +74,10 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 /* ------------- Action Creators ------------- */
+export function filterCandidatesRequest() {
+  return { type: FILTER_CANDIDATES__REQUEST };
+}
+
 export function rejectCandidatesRequest() {
   return { type: REJECT_CANDIDATES__REQUEST };
 }
@@ -98,10 +112,14 @@ export function rejectCandidate(candidateId) {
     try {
       dispatch(rejectCandidatesRequest());
 
-      const rejected = await loadFromStorage("rejected");
-      if (rejected.indexOf(candidateId) === -1) {
-        rejected.push(candidateId);
+      let rejected = await loadFromStorage("rejected");
+
+      if (!rejected) {
+        await saveToStorage("rejected", []);
+        rejected = await loadFromStorage("rejected");
       }
+      rejected.push(candidateId);
+
       await saveToStorage("rejected", rejected);
 
       dispatch(rejectCandidatesSuccess(candidateId));
@@ -116,15 +134,20 @@ export function acceptCandidate(candidateId) {
     try {
       dispatch(acceptCandidatesRequest());
 
-      const accepted = await loadFromStorage("accepted");
-      if (accepted.indexOf(candidateId) === -1) {
-        accepted.push(candidateId);
+      let accepted = await loadFromStorage("accepted");
+      //initialize
+      if (!accepted) {
+        await saveToStorage("accepted", []);
+        accepted = await loadFromStorage("accepted");
       }
+
+      accepted.push(candidateId);
+
       await saveToStorage("accepted", accepted);
 
-      dispatch(rejectCandidatesSuccess(candidateId));
+      dispatch(acceptCandidatesSuccess(candidateId));
     } catch (error) {
-      dispatch(rejectCandidatesError(error));
+      dispatch(acceptCandidatesError(error));
     }
   };
 }

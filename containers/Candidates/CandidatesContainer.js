@@ -3,7 +3,8 @@ import * as CandidatesActions from "./CandidatesRedux";
 import CandidatesComponent from "./CandidatesComponent";
 
 const mapStateToProps = ({ candidates }) => ({
-  matches: candidates.matches
+  matches: candidates.matches,
+  loading: candidates.loading
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -60,10 +60,7 @@ export function appStarted() {
       const accepted = await loadFromStorage("accepted");
       const rejected = await loadFromStorage("rejected");
 
-      // await saveToStorage("filters", [
-      //   { name: "Create React App", experianceYears: 3 },
-      //   { name: "StackBlitz", experianceYears: 6 }
-      // ]);
+      await saveToStorage("filters", []);
 
       const filters = await loadFromStorage("filters");
 

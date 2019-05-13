@@ -1,7 +1,10 @@
 import Immutable from "seamless-immutable";
 import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
 
-import { updateMatchingCandidates } from "../Candidates/CandidatesRedux";
+import {
+  updateMatchingCandidates,
+  filterCandidatesRequest
+} from "../Candidates/CandidatesRedux";
 
 /* ------------- Actions ------------- */
 const ADD_FILTER_REQUEST = "mossad/Filters/ADD_FILTER_REQUEST";
@@ -100,7 +103,7 @@ export function deleteFilterError(error) {
 }
 
 export function setFiltersInitialValue(params) {
-  return { type: SET_FILTERS_INITAL_VALUE, payload:  params };
+  return { type: SET_FILTERS_INITAL_VALUE, payload: params };
 }
 
 /* ------------- Thunks ------------- */
@@ -119,6 +122,7 @@ export function addFilterParam(filterParam) {
       dispatch(addFilterSuccess(filterParam));
 
       //load new matches after filters change
+      dispatch(filterCandidatesRequest());
       dispatch(updateMatchingCandidates(null, filters));
     } catch (error) {
       dispatch(addFilterError(error));
@@ -140,6 +144,7 @@ export function deleteFilterParam(filterParam) {
 
       dispatch(deleteFilterSuccess(filterParam));
       //load new matches after filters change
+      dispatch(filterCandidatesRequest());
       dispatch(updateMatchingCandidates(null, filters));
     } catch (error) {
       dispatch(deleteFilterError(error));
