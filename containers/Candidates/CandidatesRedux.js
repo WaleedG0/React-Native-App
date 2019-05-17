@@ -45,11 +45,14 @@ export default function reducer(state = initialState, action = {}) {
       });
 
     case LOAD_CANDIDATES_SUCCESS:
+      // I get an error if i save candidates collection to memory coz 
+      //it's huge and we might need to write ti desk in this case
+      let candidates = action.payload.slice(0, 100);
       return state.merge({
         loading: false,
         error: false,
-        candidatesDB: action.payload.slice(0, 100),
-        matches: action.payload.slice(0, 10)
+        candidatesDB: candidates,
+        matches: candidates
       });
 
     case LOAD_CANDIDATES_ERROR:
@@ -65,6 +68,7 @@ export default function reducer(state = initialState, action = {}) {
 
     case REJECT_CANDIDATES_SUCCESS:
       return state.merge({
+        rejected: [...state.rejected, action.payload.candidateId],
         matches: state.matches.filter(
           match => match._id !== action.payload.candidateId
         ),

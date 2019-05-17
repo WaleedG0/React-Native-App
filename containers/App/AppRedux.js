@@ -1,5 +1,4 @@
 import Immutable from "seamless-immutable";
-import {AsyncStorage} from "react-native";
 
 /* ------------- Actions ------------- */
 const APP_STARTED_REQUEST = "mossad/App/APP_STARTED_REQUEST";
