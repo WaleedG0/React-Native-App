@@ -22,6 +22,14 @@ export default class Candidates extends React.Component {
     return false;
   }
 
+  componentWillMount() {
+    const { onLoadCandidates, candidatesDB } = this.props;
+
+    if (candidatesDB.length === 0) {
+      onLoadCandidates();
+    }
+  }
+
   render() {
     const {
       matches,

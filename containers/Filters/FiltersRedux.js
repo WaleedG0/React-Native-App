@@ -1,9 +1,7 @@
 import Immutable from "seamless-immutable";
-import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
 
 import {
-  updateMatchingCandidates,
-  filterCandidatesRequest
+  updateMatchingCandidates
 } from "../Candidates/CandidatesRedux";
 
 /* ------------- Actions ------------- */
@@ -14,6 +12,10 @@ const ADD_FILTER_ERROR = "mossad/Filters/ADD_FILTER_ERROR";
 const DELETE_FILTER_REQUEST = "mossad/Filters/DELETE_FILTER_REQUEST";
 const DELETE_FILTER_SUCCESS = "mossad/Filters/DELETE_FILTER_SUCCESS";
 const DELETE_FILTER_ERROR = "mossad/Filters/DELETE_FILTER_ERROR";
+
+const LOAD_TECHNOLOGIES_REQUEST = "mossad/Filters/LOAD_TECHNOLOGIES_REQUEST";
+const LOAD_TECHNOLOGIES_SUCCESS = "mossad/Filters/LOAD_TECHNOLOGIES_SUCCESS";
+const LOAD_TECHNOLOGIES_ERROR = "mossad/Filters/LOAD_TECHNOLOGIES_ERROR";
 
 const SET_FILTERS_INITAL_VALUE = "mossad/Filters/SET_FILTERS_INITAL_VALUE";
 
@@ -28,6 +30,11 @@ const initialState = Immutable({
 /* ------------- Reducer ------------- */
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case LOAD_TECHNOLOGIES_SUCCESS:
+      return state.merge({
+        technologiesDB: action.payload.technologies
+      });
+
     case ADD_FILTER_REQUEST:
       return state.merge({
         loading: true
@@ -53,7 +60,9 @@ export default function reducer(state = initialState, action = {}) {
     case DELETE_FILTER_SUCCESS:
       return state.merge({
         loading: false,
-        params: action.payload.params
+        params: state.params.filter(
+          param => param.name !== action.payload.param.name
+        )
       });
 
     case DELETE_FILTER_ERROR:
@@ -90,8 +99,8 @@ export function deleteFilterRequest() {
   return { type: DELETE_FILTER_REQUEST };
 }
 
-export function deleteFilterSuccess(params) {
-  return { type: DELETE_FILTER_SUCCESS, payload: { params } };
+export function deleteFilterSuccess(param) {
+  return { type: DELETE_FILTER_SUCCESS, payload: { param } };
 }
 
 export function deleteFilterError(error) {
@@ -102,22 +111,41 @@ export function setFiltersInitialValue(params) {
   return { type: SET_FILTERS_INITAL_VALUE, payload: params };
 }
 
+export function loadTechnologiesRequest() {
+  return { type: LOAD_TECHNOLOGIES_REQUEST };
+}
+
+export function loadTechnologiesSuccess(technologies) {
+  return { type: LOAD_TECHNOLOGIES_SUCCESS, payload: { technologies } };
+}
+
+export function loadTechnologiesError(params) {
+  return { type: LOAD_TECHNOLOGIES_ERROR, payload: { params } };
+}
+
 /* ------------- Thunks ------------- */
+
+export function loadTechnologies(filterParam) {
+  return async (dispatch, getState, api) => {
+    try {
+      dispatch(loadTechnologiesRequest());
+      const technologies = await api.TechnologiesModel.loadTechcologies();
+      dispatch(loadTechnologiesSuccess(technologies));
+    } catch (error) {
+      dispatch(loadTechnologiesError(error));
+    }
+  };
+}
+
 export function addFilterParam(filterParam) {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(addFilterRequest());
-
-      let filters = await loadFromStorage("filters");
-      filters.push(filterParam);
-
-      await saveToStorage("filters", filters);
 
       dispatch(addFilterSuccess(filterParam));
 
       //load new matches after filters change
-      dispatch(filterCandidatesRequest());
-      dispatch(updateMatchingCandidates({ filters }));
+      dispatch(updateMatchingCandidates({ filters: getState().filters.params }));
     } catch (error) {
       dispatch(addFilterError(error));
     }
@@ -125,24 +153,13 @@ export function addFilterParam(filterParam) {
 }
 
 export function deleteFilterParam(filterParam) {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
       dispatch(deleteFilterRequest());
 
-      let filters = await loadFromStorage("filters");
-      
-      await saveToStorage(
-        "filters",
-        filters.filter(param => param.name !== filterParam.name)
-      );
-
-     filters = await loadFromStorage("filters");
-
-
-      dispatch(deleteFilterSuccess(filters));
+      dispatch(deleteFilterSuccess(filterParam));
       //load new matches after filters change
-      dispatch(filterCandidatesRequest());
-      dispatch(updateMatchingCandidates({ filters }));
+      dispatch(updateMatchingCandidates({ filters: getState().filters.params }));
     } catch (error) {
       dispatch(deleteFilterError(error));
     }

@@ -1,5 +1,4 @@
 import Immutable from "seamless-immutable";
-import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
 import filterMatches from "../../util/filterMatches";
 
 /* ------------- Actions ------------- */
@@ -21,51 +20,73 @@ const ACCEPT_CANDIDATES_ERROR = "mossad/Candidates/ACCEPT_CANDIDATES_ERROR";
 const UPDATE_MATCHING_CANDIDATES =
   "mossad/Candidates/UPDATE_MATCHING_CANDIDATES";
 
+const LOAD_CANDIDATES_ERROR = "mossad/Candidates/LOAD_CANDIDATES_ERROR";
+const LOAD_CANDIDATES_SUCCESS = "mossad/Candidates/LOAD_CANDIDATES_SUCCESS";
+
+const LOAD_CANDIDATES_REQUEST = "mossad/Candidates/LOAD_CANDIDATES_REQUEST";
+
 /* ------------- initial state ------------- */
 const initialState = Immutable({
   matches: [],
   candidatesDB: [],
   accepted: [],
   rejected: [],
-  loading: true,
+  loading: false,
   error: false
 });
 
 /* ------------- Reducer ------------- */
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case LOAD_CANDIDATES_REQUEST:
+      return state.merge({
+        loading: true,
+        error: false
+      });
+
+    case LOAD_CANDIDATES_SUCCESS:
+      return state.merge({
+        loading: false,
+        error: false,
+        candidatesDB: action.payload.slice(0, 100),
+        matches: action.payload.slice(0, 10)
+      });
+
+    case LOAD_CANDIDATES_ERROR:
+      return state.merge({
+        loading: false,
+        error: true
+      });
+
     case FILTER_CANDIDATES__REQUEST:
       return state.merge({
         loading: true
       });
 
-    //@todo: update matches when accepted / rejected is changed
     case REJECT_CANDIDATES_SUCCESS:
       return state.merge({
-        rejected: [...state.rejected, action.payload.candidateId],
+        matches: state.matches.filter(
+          match => match._id !== action.payload.candidateId
+        ),
         loading: false
       });
 
     case ACCEPT_CANDIDATES_SUCCESS:
       return state.merge({
         accepted: [...state.accepted, action.payload.candidateId],
+        matches: state.matches.filter(
+          match => match._id !== action.payload.candidateId
+        ),
         loading: false
       });
 
     case UPDATE_MATCHING_CANDIDATES:
-      let accepted = action.payload.accepted || state.accepted;
-      let rejected = action.payload.rejected || state.rejected;
-      let candidatesDB = action.payload.candidatesDB || state.candidatesDB;
-
       return state.merge({
-        accepted,
-        rejected,
-        candidatesDB,
         matches: filterMatches(
-          candidatesDB,
+          state.candidatesDB,
           action.payload.filters || [],
-          rejected,
-          accepted
+          state.rejected,
+          state.accepted
         ),
         loading: false
       });
@@ -84,8 +105,8 @@ export function rejectCandidatesRequest() {
   return { type: REJECT_CANDIDATES__REQUEST };
 }
 
-export function rejectCandidatesSuccess(rejected) {
-  return { type: REJECT_CANDIDATES_SUCCESS, payload: { rejected } };
+export function rejectCandidatesSuccess(candidateId) {
+  return { type: REJECT_CANDIDATES_SUCCESS, payload: { candidateId } };
 }
 
 export function rejectCandidatesError(error) {
@@ -108,24 +129,40 @@ export function updateMatchingCandidates(data) {
   return { type: UPDATE_MATCHING_CANDIDATES, payload: data };
 }
 
+export function loadCandidatesRequest(data) {
+  return { type: LOAD_CANDIDATES_REQUEST, payload: data };
+}
+
+export function loadCandidatesError(data) {
+  return { type: LOAD_CANDIDATES_ERROR, payload: data };
+}
+
+export function loadCandidatesSuccess(data) {
+  return { type: LOAD_CANDIDATES_SUCCESS, payload: data };
+}
+
 /* ------------- Thunks ------------- */
+
+export function loadCandidates() {
+  return async (dispatch, getState, api) => {
+    try {
+      dispatch(loadCandidatesRequest());
+
+      const candidates = await api.CandidatesModel.loadCandidates();
+
+      dispatch(loadCandidatesSuccess(candidates));
+    } catch (error) {
+      dispatch(loadCandidatesError(error));
+    }
+  };
+}
+
 export function rejectCandidate(candidateId) {
   return async dispatch => {
     try {
       dispatch(rejectCandidatesRequest());
 
-      let rejected = await loadFromStorage("rejected");
-
-      //initialize
-      if (!rejected) {
-        await saveToStorage("rejected", []);
-        rejected = await loadFromStorage("rejected");
-      }
-      rejected.push(candidateId);
-
-      await saveToStorage("rejected", rejected);
-
-      dispatch(rejectCandidatesSuccess(rejected));
+      dispatch(rejectCandidatesSuccess(candidateId));
     } catch (error) {
       dispatch(rejectCandidatesError(error));
     }
@@ -136,18 +173,6 @@ export function acceptCandidate(candidateId) {
   return async dispatch => {
     try {
       dispatch(acceptCandidatesRequest());
-
-      let accepted = await loadFromStorage("accepted");
-
-      //initialize
-      if (!accepted) {
-        await saveToStorage("accepted", []);
-        accepted = await loadFromStorage("accepted");
-      }
-
-      accepted.push(candidateId);
-
-      await saveToStorage("accepted", accepted);
 
       dispatch(acceptCandidatesSuccess(candidateId));
     } catch (error) {

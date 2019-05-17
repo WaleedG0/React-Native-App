@@ -1,13 +1,14 @@
 import { connect } from "react-redux";
 import AddFilterComponent from "./AddFilterComponent";
-import { addFilterParam } from "../Filters/FiltersRedux";
+import * as AddFilterActions from "../Filters/FiltersRedux";
 
 const mapStateToProps = ({ filters }) => ({
   technologiesDB: filters.technologiesDB
 });
 
 const mapDispatchToProps = dispatch => ({
-  addFilter: param => dispatch(addFilterParam(param))
+  addFilter: param => dispatch(AddFilterActions.addFilterParam(param)),
+  onLoadTechnologies: () => dispatch(AddFilterActions.loadTechnologies())
 });
 
 export default connect(

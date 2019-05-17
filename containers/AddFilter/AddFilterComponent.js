@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { Form, Item, Picker, Input, Button, Text } from "native-base";
+import { Form, Item, Picker, Input, Button, Text, Spinner } from "native-base";
 import Icon from "../../components/Icon";
 import styles from "./AddFilterStyles";
 
@@ -15,6 +15,14 @@ export default class AddFilter extends React.Component {
       experianceYears: "1"
     }
   };
+
+  componentWillMount() {
+    const { technologiesDB, onLoadTechnologies } = this.props;
+
+    if (technologiesDB.length === 0) {
+      onLoadTechnologies();
+    }
+  }
 
   handleValueChange = (inputName, value) => {
     this.setState(prevState => ({
@@ -37,50 +45,56 @@ export default class AddFilter extends React.Component {
     const { values } = this.state;
     return (
       <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <Form>
-            <Item picker>
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select A Technology"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                selectedValue={this.state.values.name}
-                onValueChange={value => this.handleValueChange("name", value)}
-              >
-                {technologiesDB.map((technology, index) => (
-                  <Picker.Item
-                    key={index}
-                    label={technology.name}
-                    value={technology.name}
-                  />
-                ))}
-              </Picker>
-            </Item>
-            <Item regular style={{ marginTop: 20 }}>
-              <Input
-                value={this.state.values.experianceYears}
-                placeholder="Years of experince"
-                onChangeText={value =>
-                  this.handleValueChange("experianceYears", value)
-                }
-              />
-            </Item>
+        {technologiesDB.length === 0 ? (
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Spinner color="blue" />
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+          >
+            <Form>
+              <Item picker>
+                <Picker
+                  mode="dropdown"
+                  iosIcon={<Icon name="arrow-down" />}
+                  placeholder="Select A Technology"
+                  placeholderStyle={{ color: "#bfc6ea" }}
+                  placeholderIconColor="#007aff"
+                  selectedValue={this.state.values.name}
+                  onValueChange={value => this.handleValueChange("name", value)}
+                >
+                  {technologiesDB.map((technology, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={technology.name}
+                      value={technology.name}
+                    />
+                  ))}
+                </Picker>
+              </Item>
+              <Item regular style={{ marginTop: 20 }}>
+                <Input
+                  value={values.experianceYears}
+                  placeholder="Years of experince"
+                  onChangeText={value =>
+                    this.handleValueChange("experianceYears", value)
+                  }
+                />
+              </Item>
 
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <Button
-                style={{ flex: 1, marginTop: 30, justifyContent: "center" }}
-                onPress={() => this.handleAddFilter()}
-              >
-                <Text>Add</Text>
-              </Button>
-            </View>
-          </Form>
-        </ScrollView>
+              <View style={{ flex: 1, flexDirection: "row" }}>
+                <Button
+                  style={{ flex: 1, marginTop: 30, justifyContent: "center" }}
+                  onPress={() => this.handleAddFilter()}
+                >
+                  <Text>Add</Text>
+                </Button>
+              </View>
+            </Form>
+          </ScrollView>
+        )}
       </View>
     );
   }

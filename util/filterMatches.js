@@ -19,7 +19,6 @@ const filterMatches = (candidatesDB, filters, rejected, accepted) => {
       : false;
   });
 
-  console.tron.log(matches);
   return matches;
 };
 

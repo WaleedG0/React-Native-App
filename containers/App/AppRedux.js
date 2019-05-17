@@ -1,7 +1,5 @@
 import Immutable from "seamless-immutable";
-import { loadFromStorage, saveToStorage } from "../../util/asyncStorage";
-import { updateMatchingCandidates } from "../Candidates/CandidatesRedux";
-import { setFiltersInitialValue } from "../Filters/FiltersRedux";
+import {AsyncStorage} from "react-native";
 
 /* ------------- Actions ------------- */
 const APP_STARTED_REQUEST = "mossad/App/APP_STARTED_REQUEST";
@@ -51,38 +49,6 @@ export function appStarted() {
   return async (dispatch, getState, api) => {
     try {
       dispatch(appStartedRequest());
-      const technologies = await api.TechnologiesModel.loadTechcologies();
-      await saveToStorage("technologies", technologies);
-
-      const candidates = await api.CandidatesModel.loadCandidates();
-      await saveToStorage("candidates", candidates);
-
-      const accepted = await loadFromStorage("accepted");
-      const rejected = await loadFromStorage("rejected");
-
-      let filters = await loadFromStorage("filters");
-
-      //initialize
-      if(!filters) {
-        await saveToStorage("filters", []);
-        filters = []
-      }
-
-      dispatch(
-        setFiltersInitialValue({
-          params: filters,
-          technologies
-        })
-      );
-
-      dispatch(
-        updateMatchingCandidates({
-          candidatesDB: candidates,
-          filters,
-          accepted,
-          rejected
-        })
-      );
 
       dispatch(appStartedSuccess());
     } catch (error) {
