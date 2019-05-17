@@ -31,9 +31,9 @@ This is a list of things that I would improve if i had more time:
 
 - **Ui**: I used Native base as a UI Library to quicklly put together a decent UI but due to lack of time I could not polish it and make it look nicer and more friendly and perhaps fix some of the bugs hahaha. 
 
-- **Performance**: I wan going to use React Native FlatList to render the matched candidates but because I am using absolute positiong to stack the list of candidates to make the tender swipe but it turned out that FlatList does not work with position absolute so I used .map but i did not have the time to configure to lazy render the components instead I limited to only render 50 views maximum.
+- **Performance**: I was going to use React Native FlatList to render the matched candidates but because I am using absolute positiong to stack the list of candidates to make the tender swipe, but it turned out that FlatList does not work with position absolute so I used .map but i did not have the time to configure it to lazy render the components instead I limited it to only render 50 views maximum.
 
-- **Type-checking**: I usually use flow.js to define the types of data that are passed into the components, but for this simple taks I used PropTypes
+- **Type-checking**: I usually use flow.js to define the types of data that are passed into the components, but for this simple taks I used PropTypes.
 
 - **Testing**: Due to lack of time i was not able to write tests with jest & enzyme. 
 
