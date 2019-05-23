@@ -20,21 +20,6 @@ yarn start
     
     - *Styles file* :  I used React Native StyleSheets for styling our components. i also used inline styles in some of components because lack of time.
 
-- **/Api** I know that this application only hits tow endpoints and this might seem like an overkill but i like to keep everything modular so i created a folder for models, each model file will contain all the http methods for a particular collection (i.e technologies/candidates).
-
-
-
-
-### Improvements
-
-This is a list of things that I would improve if i had more time:
-
-- **Ui**: I used Native base as a UI Library to quicklly put together a decent UI but due to lack of time I could not polish it and make it look nicer and more friendly and perhaps fix some of the bugs hahaha. 
-
-- **Performance**: I was going to use React Native FlatList to render the matched candidates but because I am using absolute positiong to stack the list of candidates to make the tender swipe, but it turned out that FlatList does not work with position absolute so I used .map but i did not have the time to configure it to lazy render the components instead I limited it to only render 50 views maximum.
-
-- **Type-checking**: I usually use flow.js to define the types of data that are passed into the components, but for this simple taks I used PropTypes.
-
-- **Testing**: Due to lack of time i was not able to write tests with jest & enzyme. 
+- **/Api** I created a folder for models, each model file will contain all the http methods for a particular collection (i.e technologies/candidats).
 
 
